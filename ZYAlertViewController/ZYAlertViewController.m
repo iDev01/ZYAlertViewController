@@ -33,13 +33,7 @@
 
 - (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection {
     if (self = [super init]) {
-        self.view.frame = view.frame;
-        [self.view addSubview:view];
-        [view mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.center.equalTo(self.view);
-            make.width.mas_equalTo(view.bounds.size.width);
-            make.height.mas_equalTo(view.bounds.size.height);
-        }];
+        self.view = view;
         self.modalPresentationStyle = UIModalPresentationCustom;
         self.transitioningDelegate = self;
         self.presentAnimator = [PresentAnimator new];
