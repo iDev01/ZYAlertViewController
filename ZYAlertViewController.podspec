@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
 
 	s.source_files = 'ZYAlertViewController/*.{h,m}'
 	
-	s.source = { :git => "https://github.com/iDev01/ZYAlertViewController", :tag => s.version }
+	s.source = { :git => "git@github.com:iDev01/ZYAlertViewController.git", :tag => s.version }
   
   s.dependency 'Masonry'
 
