@@ -7,7 +7,6 @@
 //
 
 #import "ZYAlertViewController.h"
-#import <Masonry/Masonry.h>
 
 @interface PresentAnimator : NSObject<UIViewControllerAnimatedTransitioning>
 
