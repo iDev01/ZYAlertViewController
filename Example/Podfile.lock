@@ -1,16 +1,16 @@
 PODS:
-  - Masonry (1.1.0)
+  - ZYAlertViewController (1.0.0)
 
 DEPENDENCIES:
-  - Masonry
+  - ZYAlertViewController
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
-    - Masonry
+    - ZYAlertViewController
 
 SPEC CHECKSUMS:
-  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  ZYAlertViewController: bad7d635a8e7e90bc317ce243d7fa4ece031e8a3
 
-PODFILE CHECKSUM: 12c197c340fb38f4244c0ed965940d1b08b74a8e
+PODFILE CHECKSUM: be64f58da3b7700960dd3be372430b3315d902f7
 
 COCOAPODS: 1.5.3
