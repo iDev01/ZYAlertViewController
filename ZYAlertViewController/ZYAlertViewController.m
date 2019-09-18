@@ -12,6 +12,7 @@
 
 @property (assign, nonatomic) PresentDirection presentDirection;
 @property (strong, nonatomic) UIViewController *toViewController;
+@property (assign, nonatomic) BOOL dismissWhenTap;
 
 @end
 
@@ -30,13 +31,14 @@
 
 @implementation ZYAlertViewController
 
-- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection {
+- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection dismissWhenTap:(BOOL)dismissWhenTap {
     if (self = [super init]) {
         self.view = view;
         self.modalPresentationStyle = UIModalPresentationCustom;
         self.transitioningDelegate = self;
         self.presentAnimator = [PresentAnimator new];
         self.presentAnimator.presentDirection = presentDirection;
+        self.presentAnimator.dismissWhenTap = dismissWhenTap;
         self.dismissAnimator = [DismissAnimator new];
         self.dismissAnimator.presentDirection = presentDirection;
     }
@@ -46,7 +48,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+
 }
 
 - (id<UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
@@ -68,13 +70,19 @@
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext {
     UIView *bgView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     bgView.backgroundColor = [UIColor clearColor];
+    bgView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    transitionContext.containerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [transitionContext.containerView addSubview:bgView];
-    UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
-    [bgView addGestureRecognizer:tapGR];
+    if (self.dismissWhenTap) {
+        UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+        [bgView addGestureRecognizer:tapGR];
+    }
     self.toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView *toView = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey].view;
     CGRect storeFrame = toView.frame;
     CGRect frame = toView.frame;
+    toView.center = transitionContext.containerView.center;
+    toView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
     switch (self.presentDirection) {
         case PresentDirectionCoverVertical:
             frame.origin.y = [UIScreen mainScreen].bounds.size.height;
