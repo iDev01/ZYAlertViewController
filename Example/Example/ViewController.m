@@ -20,13 +20,13 @@
     // Do any additional setup after loading the view.
 
     UIButton *vButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    vButton.frame = CGRectMake(50, 50, 200, 40);
+    vButton.frame = CGRectMake(UIScreen.mainScreen.bounds.size.width / 2 - 100, 200, 200, 40);
     [vButton setTitle:@"下方弹出Alert" forState:UIControlStateNormal];
     [vButton setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     [vButton addTarget:self action:@selector(vButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:vButton];
     UIButton *dButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    dButton.frame = CGRectMake(50, 100, 200, 40);
+    dButton.frame = CGRectMake(UIScreen.mainScreen.bounds.size.width / 2 - 100, 300, 200, 40);
     [dButton setTitle:@"溶解弹出Alert" forState:UIControlStateNormal];
     [dButton setTitleColor:UIColor.blackColor forState:UIControlStateNormal];
     [dButton addTarget:self action:@selector(dButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
@@ -34,15 +34,23 @@
 }
 
 - (void)vButtonClicked:(id)sender {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(37.5, 500, 300, 200)];
+    UIView *view = [[UIView alloc] init];
+    view.translatesAutoresizingMaskIntoConstraints = NO;
     view.backgroundColor = [UIColor brownColor];
+    NSLayoutConstraint *wlc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:300];
+    NSLayoutConstraint *ylc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:150];
+    [view addConstraints:@[wlc, ylc]];
     ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCoverVertical];
     [self presentViewController:alertVC animated:YES completion:nil];
 }
 
 - (void)dButtonClicked:(id)sender {
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(37.5, 160, 300, 200)];
+    UIView *view = [[UIView alloc] init];
+    view.translatesAutoresizingMaskIntoConstraints = NO;
     view.backgroundColor = [UIColor brownColor];
+    NSLayoutConstraint *wlc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:300];
+    NSLayoutConstraint *ylc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:500];
+    [view addConstraints:@[wlc, ylc]];
     ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCrossDissolve];
     [self presentViewController:alertVC animated:YES completion:nil];
 }
