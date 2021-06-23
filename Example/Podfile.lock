@@ -1,16 +1,16 @@
 PODS:
-  - ZYAlertViewController (1.0.0)
+  - ZYAlertViewController (1.0.2)
 
 DEPENDENCIES:
-  - ZYAlertViewController
+  - ZYAlertViewController (from `../`)
 
-SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
-    - ZYAlertViewController
+EXTERNAL SOURCES:
+  ZYAlertViewController:
+    :path: "../"
 
 SPEC CHECKSUMS:
-  ZYAlertViewController: bad7d635a8e7e90bc317ce243d7fa4ece031e8a3
+  ZYAlertViewController: 2cb8b743681e14baa0628098e1399eade53fce06
 
-PODFILE CHECKSUM: be64f58da3b7700960dd3be372430b3315d902f7
+PODFILE CHECKSUM: 9d2f1d2b56c1c3c755c0abb50e2b7faacb0fba68
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.9.3
