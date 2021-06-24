@@ -7,6 +7,7 @@
 //
 
 #import "ZYAlertViewController.h"
+#import <sys/utsname.h>
 
 @interface PresentAnimator : NSObject<UIViewControllerAnimatedTransitioning>
 
@@ -134,36 +135,55 @@
             break;
     }
     [transitionContext.containerView addSubview:toView];
+    struct utsname systemInfo;
 
+    uname(&systemInfo);
+
+    NSString * phoneType = [NSString stringWithCString: systemInfo.machine encoding:NSASCIIStringEncoding];
+
+    BOOL isX = [phoneType containsString:@"10,3"] || [phoneType containsString:@"10,6"] || [phoneType containsString:@"11,"] || [phoneType containsString:@"12,"] || [phoneType containsString:@"13,"];
     NSLayoutConstraint *topGreaterThanOrEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
                                                                                              attribute:NSLayoutAttributeTop
                                                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
                                                                                                 toItem:transitionContext.containerView
                                                                                              attribute:NSLayoutAttributeTop
                                                                                             multiplier:1
-                                                                                              constant:47];
-    NSLayoutConstraint *bottomGreaterThanOrEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
-                                                                                                attribute:NSLayoutAttributeBottom
-                                                                                                relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                                                   toItem:transitionContext.containerView
-                                                                                                attribute:NSLayoutAttributeBottom
-                                                                                               multiplier:1
-                                                                                                 constant:-47];
-    NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:toView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:transitionContext.containerView attribute:NSLayoutAttributeCenterX multiplier:1 constant:0];
-    NSLayoutConstraint *centerY;
+                                                                                              constant:isX ? 47 : 20];
+    NSLayoutConstraint *bottomGreaterThanOrEqualLayoutConstraint;
+    NSLayoutConstraint *centerX = [NSLayoutConstraint constraintWithItem:toView
+                                                               attribute:NSLayoutAttributeCenterX
+                                                               relatedBy:NSLayoutRelationEqual
+                                                                  toItem:transitionContext.containerView
+                                                               attribute:NSLayoutAttributeCenterX
+                                                              multiplier:1
+                                                                constant:0];
+    NSLayoutConstraint *bottomEqualLayoutConstraint;
     switch (self.presentDirection) {
         case PresentDirectionCoverVertical:
-            centerY = [NSLayoutConstraint constraintWithItem:toView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:transitionContext.containerView attribute:NSLayoutAttributeBottom multiplier:1 constant:-34];
+            bottomEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:transitionContext.containerView
+                                                                       attribute:NSLayoutAttributeBottom
+                                                                      multiplier:1
+                                                                        constant:isX ? -34 : -8];
             bottomGreaterThanOrEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
-                                                                                                        attribute:NSLayoutAttributeBottom
-                                                                                                        relatedBy:NSLayoutRelationLessThanOrEqual
-                                                                                                           toItem:transitionContext.containerView
-                                                                                                        attribute:NSLayoutAttributeBottom
-                                                                                                       multiplier:1
-                                                                                                         constant:-34];
+                                                                                    attribute:NSLayoutAttributeBottom
+                                                                                    relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                                       toItem:transitionContext.containerView
+                                                                                    attribute:NSLayoutAttributeBottom
+                                                                                   multiplier:1
+                                                                                     constant:isX ? -34 : -8];
             break;
         case PresentDirectionCrossDissolve:
-            centerY = [NSLayoutConstraint constraintWithItem:toView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:transitionContext.containerView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+            bottomEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:transitionContext.containerView attribute:NSLayoutAttributeCenterY multiplier:1 constant:0];
+            bottomGreaterThanOrEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
+                                                                                    attribute:NSLayoutAttributeBottom
+                                                                                    relatedBy:NSLayoutRelationLessThanOrEqual
+                                                                                       toItem:transitionContext.containerView
+                                                                                    attribute:NSLayoutAttributeBottom
+                                                                                   multiplier:1
+                                                                                     constant:isX ? -47 : -8];
             break;
     }
 
@@ -171,7 +191,7 @@
         topGreaterThanOrEqualLayoutConstraint,
         bottomGreaterThanOrEqualLayoutConstraint,
         centerX,
-        centerY]];
+        bottomEqualLayoutConstraint]];
     [UIView animateWithDuration:0.25
                           delay:0
                         options:UIViewAnimationOptionCurveLinear
