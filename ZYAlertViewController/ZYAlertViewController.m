@@ -13,6 +13,7 @@
 
 @property (assign, nonatomic) PresentDirection presentDirection;
 @property (strong, nonatomic) UIViewController *toViewController;
+@property (assign, nonatomic) BOOL tapDismiss;
 
 @end
 
@@ -28,11 +29,13 @@
 @property (strong, nonatomic) DismissAnimator *dismissAnimator;
 @property (assign, nonatomic) PresentDirection presentDirection;
 @property (strong, nonatomic) UIView *contentView;
+@property (assign, nonatomic) BOOL tapDismiss;
+
 @end
 
 @implementation ZYAlertViewController
 
-- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection {
+- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection tapDismiss:(BOOL)tapDismiss {
     if (self = [super init]) {
         self.contentView = view;
         self.modalPresentationStyle = UIModalPresentationCustom;
@@ -42,6 +45,8 @@
         self.presentAnimator.presentDirection = presentDirection;
         self.dismissAnimator = [DismissAnimator new];
         self.dismissAnimator.presentDirection = presentDirection;
+        self.tapDismiss = tapDismiss;
+        self.presentAnimator.tapDismiss = tapDismiss;
     }
     return self;
 }
@@ -115,7 +120,7 @@
     UIView *bgView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     bgView.backgroundColor = [UIColor clearColor];
     [transitionContext.containerView addSubview:bgView];
-    if (self.presentDirection == PresentDirectionCoverVertical) {
+    if (self.tapDismiss) {
         UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
         [bgView addGestureRecognizer:tapGR];
     }
@@ -139,9 +144,7 @@
 
     uname(&systemInfo);
 
-    NSString * phoneType = [NSString stringWithCString: systemInfo.machine encoding:NSASCIIStringEncoding];
-
-    BOOL isX = [phoneType containsString:@"10,3"] || [phoneType containsString:@"10,6"] || [phoneType containsString:@"11,"] || [phoneType containsString:@"12,"] || [phoneType containsString:@"13,"];
+    BOOL isX = [self isNotchScreen];
     NSLayoutConstraint *topGreaterThanOrEqualLayoutConstraint = [NSLayoutConstraint constraintWithItem:toView
                                                                                              attribute:NSLayoutAttributeTop
                                                                                              relatedBy:NSLayoutRelationGreaterThanOrEqual
@@ -207,6 +210,22 @@
 
 - (void)tap:(UITapGestureRecognizer *)tapGestureRecognizer {
     [self.toViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (BOOL)isNotchScreen {
+
+    if ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad) {
+        return NO;
+    }
+
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    NSInteger notchValue = size.width / size.height * 100;
+
+    if (216 == notchValue || 46 == notchValue) {
+        return YES;
+    }
+
+    return NO;
 }
 
 @end

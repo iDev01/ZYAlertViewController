@@ -40,7 +40,7 @@
     NSLayoutConstraint *wlc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:300];
     NSLayoutConstraint *ylc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:150];
     [view addConstraints:@[wlc, ylc]];
-    ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCoverVertical];
+    ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCoverVertical tapDismiss:YES];
     [self presentViewController:alertVC animated:YES completion:nil];
 }
 
@@ -51,7 +51,7 @@
     NSLayoutConstraint *wlc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1 constant:300];
     NSLayoutConstraint *ylc = [NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1 constant:500];
     [view addConstraints:@[wlc, ylc]];
-    ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCrossDissolve];
+    ZYAlertViewController *alertVC = [[ZYAlertViewController alloc] initWithView:view presentDirection:PresentDirectionCrossDissolve tapDismiss:YES];
     [self presentViewController:alertVC animated:YES completion:nil];
 }
 
