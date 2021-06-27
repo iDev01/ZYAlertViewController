@@ -17,7 +17,7 @@ typedef NS_ENUM(NSUInteger, PresentDirection) {
 
 @interface ZYAlertViewController : UIViewController
 
-- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection tapDismiss:(BOOL)tapDismiss;
+- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection dismissWhenTap:(BOOL)dismissWhenTap;
 
 @end
 

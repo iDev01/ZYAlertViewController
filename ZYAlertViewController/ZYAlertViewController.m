@@ -13,7 +13,7 @@
 
 @property (assign, nonatomic) PresentDirection presentDirection;
 @property (strong, nonatomic) UIViewController *toViewController;
-@property (assign, nonatomic) BOOL tapDismiss;
+@property (assign, nonatomic) BOOL dismissWhenTap;
 
 @end
 
@@ -29,13 +29,13 @@
 @property (strong, nonatomic) DismissAnimator *dismissAnimator;
 @property (assign, nonatomic) PresentDirection presentDirection;
 @property (strong, nonatomic) UIView *contentView;
-@property (assign, nonatomic) BOOL tapDismiss;
+@property (assign, nonatomic) BOOL dismissWhenTap;
 
 @end
 
 @implementation ZYAlertViewController
 
-- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection tapDismiss:(BOOL)tapDismiss {
+- (instancetype)initWithView:(UIView *)view presentDirection:(PresentDirection)presentDirection dismissWhenTap:(BOOL)dismissWhenTap {
     if (self = [super init]) {
         self.contentView = view;
         self.modalPresentationStyle = UIModalPresentationCustom;
@@ -45,8 +45,8 @@
         self.presentAnimator.presentDirection = presentDirection;
         self.dismissAnimator = [DismissAnimator new];
         self.dismissAnimator.presentDirection = presentDirection;
-        self.tapDismiss = tapDismiss;
-        self.presentAnimator.tapDismiss = tapDismiss;
+        self.dismissWhenTap = dismissWhenTap;
+        self.presentAnimator.dismissWhenTap = dismissWhenTap;
     }
     return self;
 }
@@ -120,7 +120,7 @@
     UIView *bgView = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     bgView.backgroundColor = [UIColor clearColor];
     [transitionContext.containerView addSubview:bgView];
-    if (self.tapDismiss) {
+    if (self.dismissWhenTap) {
         UITapGestureRecognizer *tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
         [bgView addGestureRecognizer:tapGR];
     }
