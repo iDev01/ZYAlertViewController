@@ -11,6 +11,7 @@ public final class ZYAlertViewController: UIViewController, UIViewControllerTran
     private let presentDirection: PresentDirection
     private let dismissWhenTap: Bool
     private let scrollView = UIScrollView()
+    private let contentContainer = UIView()
 
     @objc public init(view: UIView, presentDirection: PresentDirection, dismissWhenTap: Bool) {
         contentView = view
@@ -31,32 +32,54 @@ public final class ZYAlertViewController: UIViewController, UIViewControllerTran
         super.viewDidLoad()
         scrollView.frame = view.bounds
         scrollView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        if #available(iOS 11.0, *) {
-            scrollView.contentInsetAdjustmentBehavior = .never
-        }
+        scrollView.contentInsetAdjustmentBehavior = .never
         view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
+        scrollView.addSubview(contentContainer)
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentContainer.addSubview(contentView)
+        // Anchor content to a frame-managed wrapper. Leaving an unconstrained
+        // Auto Layout view directly in a scroll view lets its intrinsic width
+        // override the measured width, causing multiline text to overflow.
+        NSLayoutConstraint.activate([
+            contentView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: contentContainer.topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor)
+        ])
     }
 
-    private var contentSize: CGSize {
-        let fitting = contentView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-        return CGSize(width: max(0, fitting.width > 0 ? fitting.width : initialContentSize.width),
-                      height: max(0, fitting.height > 0 ? fitting.height : initialContentSize.height))
+    // A required width is kept intact and may scroll horizontally. Otherwise
+    // content is measured at the available width so multiline text can wrap.
+    private func measuredContentSize(for availableWidth: CGFloat) -> CGSize {
+        let fixedWidth = contentView.constraints.first {
+            $0.isActive && $0.priority == .required && $0.relation == .equal &&
+            $0.firstItem === contentView && $0.firstAttribute == .width && $0.secondItem == nil
+        }?.constant
+        let preferredWidth = fixedWidth ?? (initialContentSize.width > 0 ? initialContentSize.width : availableWidth)
+        let width = max(0, fixedWidth ?? min(preferredWidth, availableWidth))
+        let fitting = contentView.systemLayoutSizeFitting(
+            CGSize(width: width, height: UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        let height = fitting.height > 0 ? fitting.height : initialContentSize.height
+        return CGSize(width: width, height: max(0, ceil(height)))
     }
 
     fileprivate func contentSize(for width: CGFloat) -> CGSize {
-        let size = contentSize
+        let size = measuredContentSize(for: width)
         return CGSize(width: min(size.width, width), height: size.height)
     }
 
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Preserve required content dimensions; oversized content can scroll.
-        let size = contentSize
-        contentView.frame = CGRect(origin: .zero, size: CGSize(
-            width: max(size.width, view.bounds.width),
+        let size = measuredContentSize(for: view.bounds.width)
+        contentContainer.frame = CGRect(origin: .zero, size: CGSize(
+            width: size.width,
             height: max(size.height, view.bounds.height)))
-        scrollView.contentSize = contentView.frame.size
+        contentContainer.setNeedsLayout()
+        contentContainer.layoutIfNeeded()
+        scrollView.contentSize = contentContainer.bounds.size
     }
 
     public func presentationController(forPresented presented: UIViewController,
@@ -85,9 +108,7 @@ private final class AlertPresentationController: UIPresentationController {
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let container = containerView,
               let alert = presentedViewController as? ZYAlertViewController else { return .zero }
-        var insets = UIEdgeInsets.zero
-        if #available(iOS 11.0, *) { insets = container.safeAreaInsets }
-        var available = container.bounds.inset(by: insets)
+        var available = container.bounds.inset(by: container.safeAreaInsets)
         available = available.insetBy(dx: 0, dy: min(8, available.height / 2))
         var size = alert.contentSize(for: available.width)
         size.height = min(size.height, available.height)
